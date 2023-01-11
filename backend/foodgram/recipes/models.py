@@ -4,22 +4,27 @@ from django.db import models
 
 from users.models import User
 
+from .validators import HexValidator, LettersValidator, SlugValidator
+
 
 class Tag(models.Model):
 
     name = models.CharField(
         'Название',
-        max_length=settings.LENGTH_200,
+        max_length=settings.LENGTH_STANDARD_RECIPE,
+        validators=[LettersValidator()],
         unique=True
     )
     color = models.CharField(
         'Цвет в HEX',
         max_length=7,
+        validators=[HexValidator],
         unique=True
     )
     slug = models.CharField(
         'Уникальный слаг',
-        max_length=settings.LENGTH_200,
+        max_length=settings.LENGTH_STANDARD_RECIPE,
+        validators=[SlugValidator],
         unique=True
     )
 
@@ -33,11 +38,12 @@ class Ingredient(models.Model):
 
     name = models.CharField(
         'Наименование',
-        max_length=settings.LENGTH_200,
+        max_length=settings.LENGTH_STANDARD_RECIPE,
+        validators=[LettersValidator()]
     )
     measurement_unit = models.CharField(
         'Единицы измерения',
-        max_length=settings.LENGTH_200,
+        max_length=settings.LENGTH_STANDARD_RECIPE,
     )
 
     class Meta:
@@ -67,7 +73,8 @@ class Recipe(models.Model):
     )
     name = models.CharField(
         'Название',
-        max_length=settings.LENGTH_200,
+        max_length=settings.LENGTH_STANDARD_RECIPE,
+        validators=[LettersValidator()]
     )
     image = models.ImageField(
         'Ссылка на картинку на сайте',
@@ -131,9 +138,10 @@ class IngredientsAmount(models.Model):
     ingredient = models.ForeignKey(
         Ingredient,
         on_delete=models.CASCADE,
+        related_name='+',
         verbose_name='Ингредиент'
     )
-    amount = models.IntegerField(
+    amount = models.SmallIntegerField(
         'Количество',
         validators=(MinValueValidator(
             limit_value=1, message='Количество должно быть больше 0'),

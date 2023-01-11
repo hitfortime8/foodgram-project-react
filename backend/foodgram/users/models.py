@@ -2,13 +2,18 @@ from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+from recipes.validators import LettersValidator
+
+from .validators import ValidateMe
+
 
 class User(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
     username = models.CharField(
         'Уникальный юзернейм',
-        max_length=settings.LENGTH_150,
+        max_length=settings.LENGTH_STANDARD_USER,
+        validators=[LettersValidator(), ValidateMe],
         unique=True
     )
     email = models.EmailField(
@@ -18,15 +23,17 @@ class User(AbstractUser):
     )
     password = models.CharField(
         'Пароль',
-        max_length=settings.LENGTH_150
+        max_length=settings.LENGTH_STANDARD_USER
     )
     first_name = models.CharField(
         'Имя',
-        max_length=settings.LENGTH_150
+        max_length=settings.LENGTH_STANDARD_USER,
+        validators=[LettersValidator()]
     )
     last_name = models.CharField(
         'Фамилия',
-        max_length=settings.LENGTH_150
+        max_length=settings.LENGTH_STANDARD_USER,
+        validators=[LettersValidator()]
     )
 
     class Meta:

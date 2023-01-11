@@ -1,14 +1,14 @@
 from django.shortcuts import get_object_or_404
-from rest_framework import serializers, status
-from djoser.serializers import UserSerializer
 from drf_extra_fields.fields import Base64ImageField
+from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
+
 from recipes.models import (Favorite, Ingredient, IngredientsAmount, Recipe,
                             ShoppingCart, Tag)
-from rest_framework.exceptions import ValidationError
 from users.models import User
 
 
-class UserSerializer(UserSerializer):
+class UserSerializer(serializers.ModelSerializer):
     username = serializers.CharField()
     is_subscribed = serializers.SerializerMethodField()
 
@@ -146,8 +146,6 @@ class RecipeSmallSerializer(serializers.ModelSerializer):
 
 
 class SubscriberSerializer(UserSerializer):
-    username = serializers.CharField(required=False)
-    password = serializers.CharField(required=False)
     recipes = serializers.SerializerMethodField(read_only=True)
     recipes_count = serializers.SerializerMethodField(read_only=True)
 
@@ -166,10 +164,15 @@ class SubscriberSerializer(UserSerializer):
         request = self.context.get('request')
         limit = request.GET.get('recipes_limit')
         recipes = obj.recipes.all()
-        if limit:
-            recipes = recipes[: int(limit)]
-        serializer = RecipeSmallSerializer(recipes, many=True, read_only=True)
-        return serializer.data
+        try:
+            if limit:
+                recipes = recipes[: int(limit)]
+            serializer = RecipeSmallSerializer(
+                recipes, many=True, read_only=True
+            )
+            return serializer.data
+        except ValueError:
+            ValidationError('Ошибка преобразования')
 
     def get_recipes_count(self, obj):
         return obj.recipes.count()
