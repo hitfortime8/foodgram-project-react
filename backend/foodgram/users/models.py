@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-
 from recipes.validators import LettersValidator
 
 from .validators import ValidateMe
