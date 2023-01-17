@@ -17,7 +17,7 @@ services:
     env_file:
       - .env
   frontend:
-    image: hitfortime8/foodgram-front:latest
+    image: hitfortime/foodgram-front:latest
     volumes:
       - ../frontend/:/app/result_build/
   nginx:
