@@ -2,6 +2,7 @@ from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
+from djoser.views import UserViewSet
 from recipes.models import (Favorite, Ingredient, IngredientsAmount, Recipe,
                             ShoppingCart, Tag)
 from rest_framework import status, viewsets
@@ -20,7 +21,7 @@ from .serializers import (FavoriteSerializer, IngredientSerializer,
                           WriteRecipeSerializer)
 
 
-class UserViewSet(viewsets.GenericViewSet):
+class UserViewSet(UserViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     pagination_class = CustomPagination
