@@ -10,4 +10,8 @@ class HexValidator(RegexValidator):
 
 
 class LettersValidator(RegexValidator):
-    regex = '^[\w.@+-]+$'
+    regex = r'^[\w.@+-]+$'
+    message = (
+        'Имя пользователя может содержать лишь буквы, цифры и следующие'
+        'символы: @,+,-'
+    )
