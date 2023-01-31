@@ -66,16 +66,16 @@ class ReadRecipeSerializer(serializers.ModelSerializer):
     ingredients = IngredientsAmountSerializer(many=True)
     tags = TagSerializer(read_only=True, many=True)
     image = serializers.CharField(source='image.url')
-    is_favorite = serializers.SerializerMethodField()
+    is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
 
     class Meta:
         fields = ('id', 'author', 'ingredients', 'tags',
                   'name', 'image', 'text', 'cooking_time',
-                  'is_favorite', 'is_in_shopping_cart')
+                  'is_favorited', 'is_in_shopping_cart')
         model = Recipe
 
-    def get_is_favorite(self, obj):
+    def get_is_favorited(self, obj):
         request = self.context.get('request')
         if not request or request.user.is_anonymous:
             return False
@@ -141,8 +141,8 @@ class WriteRecipeSerializer(serializers.ModelSerializer):
 
 class RecipeSmallSerializer(serializers.ModelSerializer):
     class Meta:
-        fields = ('id', 'name', 'image', 'cooking_time')
         model = Recipe
+        fields = ('id', 'name', 'image', 'cooking_time')
 
 
 class SubscriberSerializer(UserSerializer):
@@ -203,8 +203,8 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
 
 class FavoriteSerializer(serializers.ModelSerializer):
     class Meta:
-        fields = ('user', 'recipe',)
         model = Favorite
+        fields = ('user', 'recipe',)
 
     def validate(self, data):
         user = data['user']
